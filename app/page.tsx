@@ -1,69 +1,130 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, Copy, Droplets, Flame } from "lucide-react";
+import { getDayPlan, DEFAULT_SETTINGS } from "@/data/plans";
+import { getRecipe } from "@/data/recipes";
+import { calcDay, calcChecked } from "@/lib/calc";
+import { toISODate, dayOfWeek, dayName, addDays, isToday } from "@/lib/date";
+import { useTimes } from "@/hooks/useTimes";
+import { useDayLog } from "@/hooks/useDayLog";
+import { MealCard } from "@/components/MealCard";
+import { ProgressRing } from "@/components/ProgressRing";
+
+export default function TodayPage() {
+  const [date, setDate] = useState(() => toISODate());
+  const dow = dayOfWeek(date);
+  const plan = useMemo(() => getDayPlan(dow), [dow]);
+  const { times, loaded: timesLoaded } = useTimes();
+  const {
+    log,
+    toggle,
+    copyYesterday,
+    loaded: logLoaded,
+  } = useDayLog(date, plan.isGymDay);
+
+  const timeMap = plan.isGymDay ? times.gymDay : times.restDay;
+  const target = plan.isGymDay
+    ? DEFAULT_SETTINGS.targets.kcalGym
+    : DEFAULT_SETTINGS.targets.kcalRest;
+  const proteinTarget = DEFAULT_SETTINGS.targets.protein;
+
+  const checkedTotals = calcChecked(plan, getRecipe, log.checked);
+  const doneCount = Object.values(log.checked).filter(Boolean).length;
+  const ready = timesLoaded && logLoaded;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between px-1">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-[2px] text-ink/50">
+            Spartan AI
+          </div>
+          <div className="text-2xl font-black tracking-tight text-ink leading-none mt-0.5">
+            {isToday(date) ? "Bugun" : dayName(dow)}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setDate((d) => addDays(d, -1))}
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-press"
+            aria-label="Kechagi kun"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <ChevronLeft size={17} />
+          </button>
+          <button
+            onClick={() => setDate((d) => addDays(d, 1))}
+            className="tap-scale flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-press"
+            aria-label="Ertangi kun"
           >
-            Documentation
-          </a>
+            <ChevronRight size={17} />
+          </button>
         </div>
-      </main>
+      </div>
+
+      <div className="rounded-3xl border border-border-soft bg-surface p-5 shadow-elevated">
+        <div className="flex items-center justify-between mb-4">
+          <span
+            className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wide ${
+              plan.isGymDay
+                ? "bg-ink-gradient text-gold shadow-press"
+                : "bg-green-soft text-green"
+            }`}
+          >
+            {plan.isGymDay ? "Gym kuni" : "Dam kuni"}
+          </span>
+          <div className="flex items-center gap-1 text-[11px] font-bold text-muted">
+            <Flame size={13} className="text-gold-deep" />
+            {doneCount}/5 bajarildi
+          </div>
+        </div>
+
+        <div className="flex items-center justify-around">
+          <ProgressRing
+            value={checkedTotals.kcal}
+            target={target}
+            size={116}
+            strokeWidth={11}
+            variant="gold"
+            label={`${checkedTotals.kcal}`}
+            sublabel={`/ ${target} kkal`}
+          />
+          <ProgressRing
+            value={checkedTotals.protein}
+            target={proteinTarget}
+            size={116}
+            strokeWidth={11}
+            variant="ink"
+            label={`${checkedTotals.protein.toFixed(0)}`}
+            sublabel={`/ ${proteinTarget} g oqsil`}
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={copyYesterday}
+        className="tap-scale flex w-full items-center justify-center gap-1.5 rounded-2xl border border-border-soft bg-surface px-3 py-2.5 text-[12px] font-bold text-ink-soft shadow-press"
+      >
+        <Copy size={14} /> Kechagini nusxala
+      </button>
+
+      <div className="space-y-2.5">
+        {plan.meals.map((meal, i) => (
+          <MealCard
+            key={meal.slot}
+            meal={meal}
+            recipe={getRecipe(meal.recipeId)}
+            time={timeMap[meal.slot]}
+            checked={ready ? !!log.checked[meal.slot] : false}
+            onToggle={() => toggle(meal.slot)}
+            delay={i * 60}
+          />
+        ))}
+      </div>
+
+      <div className="flex items-center justify-center gap-2 py-1 text-[11px] font-semibold text-ink/60">
+        <Droplets size={14} className="text-gold-deep" /> Suv: kuniga 3-3.5 l
+      </div>
     </div>
   );
 }
