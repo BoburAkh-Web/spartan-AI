@@ -112,7 +112,7 @@ export default function ProgressPage() {
                 dataKey="label"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: "#8a8072" }}
+                tick={{ fontSize: 11, fill: "var(--color-muted)" }}
               />
               <YAxis hide domain={[0, 100]} />
               <Tooltip

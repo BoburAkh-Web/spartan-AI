@@ -53,7 +53,7 @@ export function MicroRadar({ data }: Props) {
           <PolarGrid stroke="var(--color-border-soft)" />
           <PolarAngleAxis
             dataKey="label"
-            tick={{ fontSize: 10.5, fill: "#8a8072", fontWeight: 600 }}
+            tick={{ fontSize: 10.5, fill: "var(--color-muted)", fontWeight: 600 }}
           />
           <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
           <Radar

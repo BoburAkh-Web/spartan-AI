@@ -1,7 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  /* Spartan AI — asosiy palitra: gold fon, oq karta, ingichka qora chegara */
+  /* Token NOMLARI shu yerda ro'yxatga olinadi (Tailwind utility yaratish uchun).
+     Haqiqiy QIYMATLAR pastdagi :root va [data-theme] bloklarida — shu orqali
+     ranglar sahifa qayta yuklanmasdan almashadi. */
+  --color-gold: #f0b400;
+  --color-gold-bright: #f7c530;
+  --color-gold-deep: #c98f00;
+  --color-gold-ink: #5a4200;
+
+  --color-ink: #1c1712;
+  --color-ink-soft: #3a322a;
+  --color-muted: #8a8072;
+
+  --color-surface: #ffffff;
+  --color-surface-soft: #fffdf7;
+  --color-border: #1c1712;
+
+  --color-crimson: #8b2635;
+  --color-crimson-soft: #f7e3e2;
+  --color-green: #3f6b4f;
+  --color-green-soft: #e7f0e9;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+/* ============================================================
+   MODE 1 — SPARTAN (default). Kuchli, energetik, gym-mavzuli.
+   ============================================================ */
+:root,
+[data-theme="spartan"] {
   --color-gold: #f0b400;
   --color-gold-bright: #f7c530;
   --color-gold-deep: #c98f00;
@@ -21,21 +51,61 @@
   --color-green: #3f6b4f;
   --color-green-soft: #e7f0e9;
 
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  --grad-primary-from: #f7c530;
+  --grad-primary-to: #d99c00;
+  --grad-dark-from: #2a2219;
+  --grad-dark-to: #120e0a;
+
+  --shadow-tint: 28, 23, 18;
+  --shadow-glow: 240, 180, 0;
+}
+
+/* ============================================================
+   MODE 2 — SOKIN ("tinch"). Loy-terrakota + shivit-yashil.
+   Yumshoq, kam to'yingan, ko'zni charchatmaydigan tiklanish rejimi.
+   ============================================================ */
+[data-theme="sokin"] {
+  --color-gold: #c97b5a;
+  --color-gold-bright: #d89476;
+  --color-gold-deep: #a85d3d;
+  --color-gold-ink: #7a3f26;
+
+  --color-ink: #332e28;
+  --color-ink-soft: #55493d;
+  --color-muted: #9c9284;
+
+  --color-surface: #ffffff;
+  --color-surface-soft: #fbf8f2;
+  --color-border: #332e28;
+  --color-border-soft: rgba(51, 46, 40, 0.1);
+
+  --color-crimson: #5c8a6c;
+  --color-crimson-soft: #e8f0ea;
+  --color-green: #4c7a5a;
+  --color-green-soft: #e9f1eb;
+
+  --grad-primary-from: #f6efe7;
+  --grad-primary-to: #e6ddcb;
+  --grad-dark-from: #3b4a3e;
+  --grad-dark-to: #232b25;
+
+  --shadow-tint: 51, 46, 40;
+  --shadow-glow: 92, 138, 108;
 }
 
 html {
-  background: var(--color-gold);
+  background: var(--grad-primary-to);
 }
 
 body {
-  background: var(--color-gold);
+  background: var(--grad-primary-to);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
 }
 
 .safe-top {
@@ -44,57 +114,57 @@ body {
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
-
 * {
   -webkit-tap-highlight-color: transparent;
 }
-
 :focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: 2px;
 }
 
-/* ---------- Peak-darajali soya va gradient tizimi ---------- */
+/* ---------- Soya va gradient tizimi — ikkala mode'ga ham moslashadi ---------- */
 
 .shadow-card {
   box-shadow:
-    0 1px 2px rgba(28, 23, 18, 0.06),
-    0 10px 24px -8px rgba(28, 23, 18, 0.16);
+    0 1px 2px rgba(var(--shadow-tint), 0.06),
+    0 10px 24px -8px rgba(var(--shadow-tint), 0.16);
 }
-
 .shadow-elevated {
   box-shadow:
-    0 2px 4px rgba(28, 23, 18, 0.08),
-    0 20px 44px -12px rgba(28, 23, 18, 0.28);
+    0 2px 4px rgba(var(--shadow-tint), 0.08),
+    0 20px 44px -12px rgba(var(--shadow-tint), 0.28);
 }
-
 .shadow-gold-glow {
   box-shadow:
-    0 0 0 1px rgba(240, 180, 0, 0.4),
-    0 12px 32px -6px rgba(240, 180, 0, 0.55);
+    0 0 0 1px rgba(var(--shadow-glow), 0.35),
+    0 12px 32px -6px rgba(var(--shadow-glow), 0.5);
 }
-
 .shadow-press {
   box-shadow:
-    0 1px 1px rgba(28, 23, 18, 0.08),
-    0 2px 6px -2px rgba(28, 23, 18, 0.12);
+    0 1px 1px rgba(var(--shadow-tint), 0.08),
+    0 2px 6px -2px rgba(var(--shadow-tint), 0.12);
 }
-
 .bg-gold-gradient {
-  background: linear-gradient(155deg, #f7c530 0%, #f0b400 45%, #d99c00 100%);
+  background: linear-gradient(
+    155deg,
+    var(--color-gold-bright) 0%,
+    var(--color-gold-deep) 100%
+  );
 }
-
+.bg-page-gradient {
+  background: linear-gradient(
+    160deg,
+    var(--grad-primary-from) 0%,
+    var(--grad-primary-to) 100%
+  );
+}
 .bg-ink-gradient {
-  background: linear-gradient(155deg, #2a2219 0%, #1c1712 60%, #120e0a 100%);
+  background: linear-gradient(
+    155deg,
+    var(--grad-dark-from) 0%,
+    var(--grad-dark-to) 100%
+  );
 }
-
-.text-gold-gradient {
-  background: linear-gradient(135deg, #f7c530, #c98f00);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 .tap-scale {
   transition:
     transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),

@@ -41,8 +41,8 @@ export function ProgressRing({
           height: size * 0.86,
           background:
             variant === "gold"
-              ? "radial-gradient(circle, rgba(240,180,0,0.35) 0%, rgba(240,180,0,0) 70%)"
-              : "radial-gradient(circle, rgba(28,23,18,0.12) 0%, rgba(28,23,18,0) 70%)",
+              ? "radial-gradient(circle, rgba(var(--shadow-glow), 0.35) 0%, rgba(var(--shadow-glow), 0) 70%)"
+              : "radial-gradient(circle, rgba(var(--shadow-tint), 0.12) 0%, rgba(var(--shadow-tint), 0) 70%)",
           filter: "blur(6px)",
         }}
       />
@@ -56,13 +56,22 @@ export function ProgressRing({
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
             {variant === "gold" ? (
               <>
-                <stop offset="0%" stopColor="#f7c530" />
-                <stop offset="100%" stopColor="#c98f00" />
+                <stop
+                  offset="0%"
+                  style={{ stopColor: "var(--color-gold-bright)" }}
+                />
+                <stop
+                  offset="100%"
+                  style={{ stopColor: "var(--color-gold-deep)" }}
+                />
               </>
             ) : (
               <>
-                <stop offset="0%" stopColor="#3a322a" />
-                <stop offset="100%" stopColor="#1c1712" />
+                <stop
+                  offset="0%"
+                  style={{ stopColor: "var(--color-ink-soft)" }}
+                />
+                <stop offset="100%" style={{ stopColor: "var(--color-ink)" }} />
               </>
             )}
           </linearGradient>
@@ -72,7 +81,7 @@ export function ProgressRing({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(28,23,18,0.08)"
+          stroke="rgba(var(--shadow-tint), 0.08)"
           strokeWidth={strokeWidth}
         />
         <circle

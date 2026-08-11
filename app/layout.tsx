@@ -15,14 +15,24 @@ export const viewport: Viewport = {
   themeColor: "#f0b400",
 };
 
+const THEME_INIT_SCRIPT = `
+try {
+  var t = localStorage.getItem('spartan:theme') || 'spartan';
+  document.documentElement.setAttribute('data-theme', t);
+} catch (e) {}
+`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uz">
-      <body className="min-h-screen bg-gold-gradient text-ink antialiased">
+    <html lang="uz" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className="min-h-screen bg-page-gradient text-ink antialiased">
         <div className="safe-top" />
         <main className="mx-auto max-w-md px-4 pb-28 pt-4">{children}</main>
         <TabBar />

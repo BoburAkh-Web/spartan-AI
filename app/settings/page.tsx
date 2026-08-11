@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, Check, Sun, Dumbbell } from "lucide-react";
+import { RotateCcw, Check } from "lucide-react";
 import { MEAL_LABELS, GYM_LABELS } from "@/data/plans";
+import { useTheme, type ThemeId } from "@/hooks/useTheme";
 import { useTimes } from "@/hooks/useTimes";
 import { t } from "@/lib/i18n";
 import type { MealSlotId, MealTimes } from "@/types";
@@ -11,9 +12,14 @@ const SLOTS: MealSlotId[] = ["meal1", "meal2", "meal3", "meal4", "meal5"];
 
 export default function SettingsPage() {
   const { times, setTimes, resetTimes, loaded } = useTimes();
+  const { theme, setTheme, loaded: themeLoaded } = useTheme();
   const [saved, setSaved] = useState(false);
 
-  function updateSlot(group: "restDay" | "gymDay", slot: MealSlotId, value: string) {
+  function updateSlot(
+    group: "restDay" | "gymDay",
+    slot: MealSlotId,
+    value: string,
+  ) {
     const next: MealTimes = { ...times[group], [slot]: value };
     setTimes({ ...times, [group]: next });
     setSaved(true);
@@ -23,18 +29,47 @@ export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-black text-ink">Sozlamalar</h1>
-        <p className="text-[12px] text-muted">Ovqat vaqtlarini o&apos;zgartirish</p>
+        <h1 className="text-xl font-extrabold">Sozlamalar</h1>
+        <p className="text-[12px] text-muted">
+          Ko&apos;rinish va ovqat vaqtlari
+        </p>
       </div>
 
+      {themeLoaded && (
+        <div className="rounded-2xl border border-border-soft bg-surface p-4 shadow-card">
+          <h2 className="mb-1 text-[13px] font-extrabold text-ink">Rejim</h2>
+          <p className="mb-3 text-[11px] text-muted">
+            Ikkalasi ham saqlanadi, istalgan vaqt almashtirasan
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <ThemeCard
+              id="spartan"
+              name="Spartan"
+              desc="Kuchli, energetik"
+              swatches={["#f0b400", "#1c1712", "#ffffff"]}
+              active={theme === "spartan"}
+              onClick={() => setTheme("spartan")}
+            />
+            <ThemeCard
+              id="sokin"
+              name="Sokin"
+              desc="Tinch, tiklanish"
+              swatches={["#c97b5a", "#5c8a6c", "#ffffff"]}
+              active={theme === "sokin"}
+              onClick={() => setTheme("sokin")}
+            />
+          </div>
+        </div>
+      )}
+
       {!loaded ? (
-        <div className="py-10 text-center text-[12px] text-muted">Yuklanmoqda...</div>
+        <div className="py-10 text-center text-[12px] text-muted">
+          Yuklanmoqda...
+        </div>
       ) : (
         <>
           <TimeGroup
             title="Dam kuni vaqtlari"
-            icon={<Sun size={16} color="var(--color-green)" />}
-            tone="green"
             labels={MEAL_LABELS}
             values={times.restDay}
             onChange={(slot, v) => updateSlot("restDay", slot, v)}
@@ -42,8 +77,6 @@ export default function SettingsPage() {
           <TimeGroup
             title="Gym kuni vaqtlari"
             subtitle="Seshanba · Payshanba · Shanba"
-            icon={<Dumbbell size={16} color="var(--color-gold-deep)" />}
-            tone="gold"
             labels={GYM_LABELS}
             values={times.gymDay}
             onChange={(slot, v) => updateSlot("gymDay", slot, v)}
@@ -51,7 +84,7 @@ export default function SettingsPage() {
 
           <button
             onClick={resetTimes}
-            className="tap-scale flex w-full items-center justify-center gap-2 rounded-2xl border border-border-soft bg-surface py-3 text-[13px] font-semibold text-ink-soft shadow-card"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-soft bg-surface py-3 text-[13px] font-semibold text-ink-soft"
           >
             <RotateCcw size={15} /> Standart vaqtlarga qaytarish
           </button>
@@ -76,48 +109,73 @@ export default function SettingsPage() {
 function TimeGroup({
   title,
   subtitle,
-  icon,
-  tone,
   labels,
   values,
   onChange,
 }: {
   title: string;
   subtitle?: string;
-  icon: React.ReactNode;
-  tone: "green" | "gold";
   labels: typeof MEAL_LABELS;
   values: MealTimes;
   onChange: (slot: MealSlotId, value: string) => void;
 }) {
-  const iconBg = tone === "green" ? "bg-green-soft" : "bg-gold/15";
   return (
-    <div className="rounded-2xl border border-border-soft bg-surface p-4 shadow-card">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iconBg}`}>
-          {icon}
-        </span>
-        <div>
-          <h2 className="text-[13px] font-extrabold text-ink">{title}</h2>
-          {subtitle && <p className="text-[10.5px] text-muted">{subtitle}</p>}
-        </div>
+    <div className="rounded-2xl border border-border-soft bg-surface p-3">
+      <div className="mb-2">
+        <h2 className="text-[13px] font-extrabold text-ink">{title}</h2>
+        {subtitle && <p className="text-[10.5px] text-muted">{subtitle}</p>}
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {SLOTS.map((slot) => (
-          <div
-            key={slot}
-            className="flex items-center justify-between gap-3 rounded-xl px-2.5 py-1.5 odd:bg-surface-soft"
-          >
-            <span className="text-[12.5px] font-medium text-ink-soft">{t(labels[slot])}</span>
+          <div key={slot} className="flex items-center justify-between gap-3">
+            <span className="text-[12.5px] text-ink-soft">
+              {t(labels[slot])}
+            </span>
             <input
               type="time"
               value={values[slot]}
               onChange={(e) => onChange(slot, e.target.value)}
-              className="rounded-full border border-border-soft bg-surface-soft px-3 py-1.5 text-[13px] font-semibold tabular-nums text-ink"
+              className="rounded-lg border border-border-soft bg-surface-soft px-2.5 py-1.5 text-[13px] font-semibold tabular-nums text-ink"
             />
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function ThemeCard({
+  name,
+  desc,
+  swatches,
+  active,
+  onClick,
+}: {
+  id: ThemeId;
+  name: string;
+  desc: string;
+  swatches: string[];
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`tap-scale flex flex-col items-start rounded-xl border-2 p-3 text-left transition-all ${
+        active ? "border-ink shadow-card" : "border-border-soft"
+      }`}
+    >
+      <div className="flex -space-x-1.5 mb-2">
+        {swatches.map((c, i) => (
+          <span
+            key={i}
+            className="h-6 w-6 rounded-full border border-black/10"
+            style={{ background: c }}
+          />
+        ))}
+      </div>
+      <div className="text-[13px] font-extrabold text-ink">{name}</div>
+      <div className="text-[10.5px] text-muted">{desc}</div>
+    </button>
   );
 }

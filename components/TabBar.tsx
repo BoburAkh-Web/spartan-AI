@@ -50,10 +50,10 @@ export function TabBar() {
               <Icon
                 size={20}
                 strokeWidth={active ? 2.4 : 1.8}
-                color={active ? "#1c1712" : "#8a8072"}
+                color={active ? "var(--color-ink)" : "var(--color-muted)"}
               />
               <span
-                className={`text-[10px] font-bold ${active ? "text-ink" : "text-[#8a8072]"}`}
+                className={`text-[10px] font-bold ${active ? "text-ink" : "text-muted"}`}
               >
                 {label}
               </span>
