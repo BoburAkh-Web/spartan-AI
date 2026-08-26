@@ -1,6 +1,7 @@
 import { DAY_PLANS } from "@/data/plans";
 import { DayCard } from "@/components/DayCard";
 import { dayOfWeek, toISODate } from "@/lib/date";
+import { SpartanLogo } from "@/components/SpartanLogo";
 
 // Ko'rinish tartibi: Dushanba -> Yakshanba (haftalik reja sifatida tabiiyroq)
 const DISPLAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
@@ -11,9 +12,12 @@ export default function PlanPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-black text-ink">Haftalik reja</h1>
-        <p className="text-[12px] text-muted">Kunni tanla — 5 mahal ovqat va retseptlarni ko&apos;r</p>
+      <div className="flex items-center gap-2.5">
+        <SpartanLogo size={26} className="text-ink shrink-0" />
+        <div>
+          <h1 className="text-xl font-black text-ink">Haftalik reja</h1>
+          <p className="text-[12px] text-muted">Kunni tanla — 5 mahal ovqat va retseptlarni ko&apos;r</p>
+        </div>
       </div>
       <div className="space-y-2.5">
         {ordered.map((plan, i) => (

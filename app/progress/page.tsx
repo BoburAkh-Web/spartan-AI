@@ -14,6 +14,7 @@ import {
 import { listDayLogs } from "@/lib/storage";
 import { addDays, toISODate, dayShort, dayOfWeek, calcStreak } from "@/lib/date";
 import { MicroRadar } from "@/components/MicroRadar";
+import { SpartanLogo } from "@/components/SpartanLogo";
 import type { DayLog } from "@/types";
 
 const TOTAL_SLOTS = 5;
@@ -38,7 +39,10 @@ export default function ProgressPage() {
   if (logs.length === 0) {
     return (
       <div className="space-y-4">
-        <h1 className="text-xl font-black text-ink">Progress</h1>
+        <div className="flex items-center gap-2.5">
+          <SpartanLogo size={26} className="text-ink shrink-0" />
+          <h1 className="text-xl font-black text-ink">Progress</h1>
+        </div>
         <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border-soft bg-surface py-14 text-center shadow-card">
           <Sparkles size={30} color="var(--color-gold-deep)" />
           <div className="max-w-[220px] text-[13px] font-semibold text-ink">
@@ -76,7 +80,10 @@ export default function ProgressPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-xl font-black text-ink">Progress</h1>
+      <div className="flex items-center gap-2.5">
+        <SpartanLogo size={26} className="text-ink shrink-0" />
+        <h1 className="text-xl font-black text-ink">Progress</h1>
+      </div>
 
       {/* Hero — streak */}
       <div className="animate-pop-in relative overflow-hidden rounded-3xl border border-border-soft bg-ink-gradient p-6 text-white shadow-elevated">

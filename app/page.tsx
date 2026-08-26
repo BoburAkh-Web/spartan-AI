@@ -1,15 +1,24 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Copy, Droplets, Flame } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Droplets,
+  Flame,
+  Leaf,
+} from "lucide-react";
 import { getDayPlan, DEFAULT_SETTINGS } from "@/data/plans";
 import { getRecipe } from "@/data/recipes";
 import { calcDay, calcChecked } from "@/lib/calc";
 import { toISODate, dayOfWeek, dayName, addDays, isToday } from "@/lib/date";
 import { useTimes } from "@/hooks/useTimes";
 import { useDayLog } from "@/hooks/useDayLog";
+import { useTheme } from "@/hooks/useTheme";
 import { MealCard } from "@/components/MealCard";
 import { ProgressRing } from "@/components/ProgressRing";
+import { SpartanLogo } from "@/components/SpartanLogo";
 
 export default function TodayPage() {
   const [date, setDate] = useState(() => toISODate());
@@ -22,6 +31,7 @@ export default function TodayPage() {
     copyYesterday,
     loaded: logLoaded,
   } = useDayLog(date, plan.isGymDay);
+  const { theme, setTheme, loaded: themeLoaded } = useTheme();
 
   const timeMap = plan.isGymDay ? times.gymDay : times.restDay;
   const target = plan.isGymDay
@@ -36,15 +46,38 @@ export default function TodayPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between px-1">
-        <div>
-          <div className="text-[10px] font-bold uppercase tracking-[2px] text-ink/50">
-            Spartan AI
-          </div>
-          <div className="text-2xl font-black tracking-tight text-ink leading-none mt-0.5">
-            {isToday(date) ? "Bugun" : dayName(dow)}
+        <div className="flex items-center gap-2.5">
+          <SpartanLogo size={30} className="text-ink shrink-0" />
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[2px] text-ink/50">
+              Spartan AI
+            </div>
+            <div className="text-2xl font-black tracking-tight text-ink leading-none mt-0.5">
+              {isToday(date) ? "Bugun" : dayName(dow)}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
+          {themeLoaded && (
+            <button
+              onClick={() =>
+                setTheme(theme === "spartan" ? "sokin" : "spartan")
+              }
+              className="tap-scale flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-press"
+              aria-label={
+                theme === "spartan"
+                  ? "Sokin rejimga o'tish"
+                  : "Spartan rejimga o'tish"
+              }
+              title={
+                theme === "spartan"
+                  ? "Sokin rejimga o'tish"
+                  : "Spartan rejimga o'tish"
+              }
+            >
+              {theme === "spartan" ? <Leaf size={16} /> : <Flame size={16} />}
+            </button>
+          )}
           <button
             onClick={() => setDate((d) => addDays(d, -1))}
             className="tap-scale flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-press"
